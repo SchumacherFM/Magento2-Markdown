@@ -1,16 +1,17 @@
 <?php
 
-namespace SchumacherFM\Twig\Framework\View\TemplateEngine;
+namespace SchumacherFM\Markdown\Framework\View\TemplateEngine;
 
 use Magento\Framework\View\TemplateEngine\Php,
     Magento\Framework\App\Filesystem\DirectoryList,
     Magento\Framework\ObjectManagerInterface,
     Magento\Framework\App\Config\ScopeConfigInterface,
-    Magento\Framework\Event\ManagerInterface;
+    Magento\Framework\Event\ManagerInterface,
+    SchumacherFM\Markdown\Framework\View\MarkdownEngineInterface;
 
 class Markdown extends Php
 {
-    const TWIG_CACHE_DIR = 'twig';
+    const CACHE_DIR = 'markdown';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -18,9 +19,9 @@ class Markdown extends Php
     protected $_scopeConfig;
 
     /**
-     * @var \Twig_Environment
+     * @var MarkdownEngineInterface
      */
-    private $twig = null;
+    private $mdEngine = null;
 
     /**
      * @var DirectoryList
@@ -50,30 +51,13 @@ class Markdown extends Php
         $this->_directoryList = $directoryList;
         $this->_scopeConfig = $scopeConfig;
         $this->eventManager = $eventManager;
-        $this->initTwig();
+        $this->_init();
     }
 
-    /**
-     * Inits Twig with all Magento2 necessary functions
-     */
-    private function initTwig() {
-        \Twig_Autoloader::register();
+    private function _init() {
 
-        $this->twig = new \Twig_Environment($this->getLoader(), [
-            // make it configurable http://twig.sensiolabs.org/doc/api.html#environment-options
-            'cache' => $this->getCachePath(),
-            'debug' => $this->_scopeConfig->isSetFlag('dev/twig/debug'),
-            'auto_reload' => $this->_scopeConfig->isSetFlag('dev/twig/auto_reload'),
-            'strict_variables' => $this->_scopeConfig->isSetFlag('dev/twig/strict_variables'),
-            'charset' => $this->_scopeConfig->getValue('dev/twig/charset'),
-        ]);
 
-        $this->twig->addFunction(new \Twig_SimpleFunction('helper', [$this, 'helper']));
-        $this->twig->addFunction(new \Twig_SimpleFunction('block', [$this, '__call']));
-        $this->twig->addFunction(new \Twig_SimpleFunction('get*', [$this, 'catchGet']));
-        $this->twig->addFunction(new \Twig_SimpleFunction('isset', [$this, '__isset']));
-
-        $this->eventManager->dispatch('twig_init', ['twig' => $this->twig]);
+        $this->eventManager->dispatch('twig_init', ['twig' => $this->mdEngine]);
     }
 
     /**
@@ -95,7 +79,7 @@ class Markdown extends Php
         if (false === $this->_scopeConfig->isSetFlag('dev/twig/cache')) {
             return false;
         }
-        return $this->_directoryList->getPath(DirectoryList::VAR_DIR) . DIRECTORY_SEPARATOR . self::TWIG_CACHE_DIR;
+        return $this->_directoryList->getPath(DirectoryList::VAR_DIR) . DIRECTORY_SEPARATOR . self::CACHE_DIR;
     }
 
     /**
@@ -119,8 +103,8 @@ class Markdown extends Php
      * @return string rendered template
      */
     public function render(\Magento\Framework\View\Element\BlockInterface $block, $fileName, array $dictionary = []) {
-        $this->_currentBlock = $block;
-        return $this->getTemplate($fileName)->render($dictionary);
+
+        // same as in PHP ngin ...
     }
 
     /**
@@ -129,7 +113,7 @@ class Markdown extends Php
      */
     private function getTemplate($fileName) {
         $tf = str_replace($this->_directoryList->getPath(DirectoryList::ROOT) . DIRECTORY_SEPARATOR, '', $fileName);
-        return $this->twig->loadTemplate($tf);
+        return $this->mdEngine->loadTemplate($tf);
     }
 
     /**
