@@ -1,14 +1,26 @@
 <?php
 
-namespace SchumacherFM\Twig\Framework\View\TemplateEngine;
+namespace SchumacherFM\Markdown\Framework\View\MarkdownEngine;
 
-use Magento\Framework\View\TemplateEngine\Php,
-    Magento\Framework\App\Filesystem\DirectoryList,
-    Magento\Framework\ObjectManagerInterface,
-    Magento\Framework\App\Config\ScopeConfigInterface,
-    Magento\Framework\Event\ManagerInterface;
+use \Parsedown as pDown,
+    SchumacherFM\Markdown\Framework\View\MarkdownEngineInterface;
 
-class Parsedown
+class Parsedown implements MarkdownEngineInterface
 {
+    /**
+     * @var pDown
+     */
+    private $engine;
 
+    public function __construct(pDown $engine) {
+        $this->engine = $engine;
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function transform($text) {
+        return $this->engine->text($text);
+    }
 }

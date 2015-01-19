@@ -3,30 +3,23 @@
 namespace SchumacherFM\Markdown\Framework\View\TemplateEngine;
 
 use Magento\Framework\View\TemplateEngine\Php,
-    Magento\Framework\App\Filesystem\DirectoryList,
     Magento\Framework\ObjectManagerInterface,
     Magento\Framework\App\Config\ScopeConfigInterface,
     Magento\Framework\Event\ManagerInterface,
-    SchumacherFM\Markdown\Framework\View\MarkdownEngineInterface;
+    SchumacherFM\Markdown\Framework\View\MarkdownEngineInterface,
+    SchumacherFM\Markdown\Framework\View\MarkdownEngineFactory;
 
 class Markdown extends Php
 {
-    const CACHE_DIR = 'markdown';
-
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $_scopeConfig;
+    protected $scopeConfig;
 
     /**
      * @var MarkdownEngineInterface
      */
     private $mdEngine = null;
-
-    /**
-     * @var DirectoryList
-     */
-    protected $_directoryList;
 
     /**
      * Event manager
@@ -36,59 +29,22 @@ class Markdown extends Php
     protected $eventManager;
 
     /**
-     * @param ObjectManagerInterface $helperFactory
-     * @param DirectoryList $directoryList
+     * @param ObjectManagerInterface $objectManager
      * @param ScopeConfigInterface $scopeConfig
      * @param ManagerInterface $eventManager
+     * @param MarkdownEngineFactory $engineFactory
      */
     public function __construct(
-        ObjectManagerInterface $helperFactory,
-        DirectoryList $directoryList,
+        ObjectManagerInterface $objectManager,
         ScopeConfigInterface $scopeConfig,
-        ManagerInterface $eventManager
+        ManagerInterface $eventManager,
+        MarkdownEngineFactory $engineFactory
     ) {
-        parent::__construct($helperFactory);
-        $this->_directoryList = $directoryList;
-        $this->_scopeConfig = $scopeConfig;
+        parent::__construct($objectManager);
+        $this->scopeConfig = $scopeConfig;
         $this->eventManager = $eventManager;
-        $this->_init();
-    }
-
-    private function _init() {
-
-
-        $this->eventManager->dispatch('twig_init', ['twig' => $this->mdEngine]);
-    }
-
-    /**
-     * @return \Twig_LoaderInterface
-     */
-    private function getLoader() {
-        $loader = new \stdClass();
-        $this->eventManager->dispatch('twig_loader', ['loader' => $loader]);
-        if (false === ($loader instanceof \Twig_LoaderInterface)) {
-            $loader = new \Twig_Loader_Filesystem($this->_directoryList->getPath(DirectoryList::ROOT));
-        }
-        return $loader;
-    }
-
-    /**
-     * @return string
-     */
-    private function getCachePath() {
-        if (false === $this->_scopeConfig->isSetFlag('dev/twig/cache')) {
-            return false;
-        }
-        return $this->_directoryList->getPath(DirectoryList::VAR_DIR) . DIRECTORY_SEPARATOR . self::CACHE_DIR;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function catchGet() {
-        $args = func_get_args();
-        $name = array_shift($args);
-        return $this->__call('get' . $name, $args);
+        $this->mdEngine = $engineFactory->create($this->scopeConfig->getValue('dev/markdown/engine'));
+        $this->eventManager->dispatch('markdown_init', ['engine' => $this->mdEngine]);
     }
 
     /**
@@ -103,31 +59,6 @@ class Markdown extends Php
      * @return string rendered template
      */
     public function render(\Magento\Framework\View\Element\BlockInterface $block, $fileName, array $dictionary = []) {
-
-        // same as in PHP ngin ...
-    }
-
-    /**
-     * @param $fileName
-     * @return \Twig_TemplateInterface
-     */
-    private function getTemplate($fileName) {
-        $tf = str_replace($this->_directoryList->getPath(DirectoryList::ROOT) . DIRECTORY_SEPARATOR, '', $fileName);
-        return $this->mdEngine->loadTemplate($tf);
-    }
-
-    /**
-     * Get helper singleton
-     *
-     * @param string $className
-     * @return \Magento\Framework\App\Helper\AbstractHelper
-     * @throws \LogicException
-     */
-    public function helper($className) {
-        $helper = $this->_helperFactory->get($className);
-        if (false === $helper instanceof \Magento\Framework\App\Helper\AbstractHelper) {
-            throw new \LogicException($className . ' doesn\'t extends Magento\Framework\App\Helper\AbstractHelper');
-        }
-        return $helper;
+        return $this->mdEngine->transform(parent::render($block, $fileName, $dictionary));
     }
 }

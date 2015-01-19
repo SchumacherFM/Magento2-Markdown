@@ -4,33 +4,14 @@
 
     <system>
         <section id="dev">
-            <group id="markdown" translate="label" showInDefault="1" showInWebsite="1" showInStore="1"
+            <group id="markdown" translate="label" showInDefault="1" showInWebsite="0" showInStore="0"
                    sortOrder="1800">
                 <label>Markdown [SchumacherFM]</label>
 
-                <field id="debug" translate="label" type="select" sortOrder="50" showInDefault="1"
+                <field id="engine" translate="label" type="select" sortOrder="50" showInDefault="1"
                        showInWebsite="0" showInStore="0">
-                    <label>Debug</label>
-                    <source_model>Magento\Backend\Model\Config\Source\Yesno</source_model>
-                    <comment>debug: When set to true, the generated templates have a __toString() method that you can
-                        use to display the generated nodes (default to false).
-                    </comment>
-                </field>
-
-                <field id="cache" translate="label" type="select" sortOrder="60" showInDefault="1"
-                       showInWebsite="0" showInStore="0">
-                    <label>Use Cache</label>
-                    <source_model>Magento\Backend\Model\Config\Source\Yesno</source_model>
-                    <comment>cache: An absolute path (hardcoded: var/markdown/) where to store the compiled templates,
-                        or false to disable caching (which is the default). If set to true here the hardcoded path
-                        will be used for caching.
-                    </comment>
-                </field>
-
-                <field id="charset" translate="label" type="text" sortOrder="70" showInDefault="1"
-                       showInWebsite="0" showInStore="0">
-                    <label>Charset</label>
-                    <comment>charset: The charset used by the templates (default to utf-8).</comment>
+                    <label>Engine</label>
+                    <source_model>SchumacherFM\Markdown\Model\Config\Source\Engines</source_model>
                 </field>
 
             </group>

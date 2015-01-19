@@ -4,8 +4,7 @@
     <default>
         <dev>
             <markdown>
-                <cache>1</cache>
-                <charset>utf-8</charset>
+                <engine>michelf</engine>
             </markdown>
         </dev>
     </default>

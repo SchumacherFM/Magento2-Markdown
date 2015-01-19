@@ -7,5 +7,9 @@ namespace SchumacherFM\Markdown\Framework\View;
  */
 interface MarkdownEngineInterface
 {
-    // @todo
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function transform($text);
 }

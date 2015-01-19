@@ -1,15 +1,26 @@
 <?php
 
-namespace SchumacherFM\Twig\Framework\View\TemplateEngine;
+namespace SchumacherFM\Markdown\Framework\View\MarkdownEngine;
 
-use Magento\Framework\View\TemplateEngine\Php,
-    Magento\Framework\App\Filesystem\DirectoryList,
-    Magento\Framework\ObjectManagerInterface,
-    Magento\Framework\App\Config\ScopeConfigInterface,
-    Magento\Framework\Event\ManagerInterface;
+use Michelf\MarkdownExtra,
+    SchumacherFM\Markdown\Framework\View\MarkdownEngineInterface;
 
-class MichelfExtra
+class MichelfExtra implements MarkdownEngineInterface
 {
+    /**
+     * @var MarkdownExtra
+     */
+    private $engine;
 
+    public function __construct(MarkdownExtra $engine) {
+        $this->engine = $engine;
+    }
 
+    /**
+     * @param string $text
+     * @return string
+     */
+    public function transform($text) {
+        return $this->engine->transform($text);
+    }
 }

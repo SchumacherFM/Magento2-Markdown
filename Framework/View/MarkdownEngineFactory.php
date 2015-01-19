@@ -29,8 +29,7 @@ class MarkdownEngineFactory
      * @param ObjectManagerInterface $objectManager
      * @param array $engines Format: array('<name>' => 'MarkdownEngine\Class', ...)
      */
-    public function __construct(ObjectManagerInterface $objectManager, array $engines)
-    {
+    public function __construct(ObjectManagerInterface $objectManager, array $engines) {
         $this->objectManager = $objectManager;
         $this->engines = $engines;
     }
@@ -43,8 +42,7 @@ class MarkdownEngineFactory
      * @throws \UnexpectedValueException If markdown engine doesn't implement the necessary interface
      * @throws \InvalidArgumentException If markdown engine doesn't exist
      */
-    public function create($name)
-    {
+    public function create($name) {
         if (!isset($this->engines[$name])) {
             throw new \InvalidArgumentException("Unknown template engine type: '{$name}'.");
         }
@@ -54,5 +52,12 @@ class MarkdownEngineFactory
             throw new \UnexpectedValueException("{$engineClass} has to implement the markdown engine interface.");
         }
         return $engineInstance;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEngines() {
+        return $this->engines;
     }
 }
