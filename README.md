@@ -15,26 +15,29 @@ from Markdown to HTML.
 Events & Configuration
 -------------
 
-The Markdown template engine class dispatches one events so that you can modify the current parser.
+The Markdown template engine class dispatches one event which lets you modify the current parser.
 
 Event name: `markdown_init` with event object: `engine`.
 
 Configuration options can be found Stores -> Settings -> Configuration -> Advanced -> Developer -> Markdown.
 
-You can choose from one of the three default engines: 
+You can choose from one of the three engines: 
 
 - Michelf (Markdown) [https://michelf.ca/projects/php-markdown/](https://michelf.ca/projects/php-markdown/)
 - MichelfExtra (Markdown Extra) [https://michelf.ca/projects/php-markdown/extra/](https://michelf.ca/projects/php-markdown/extra/)
 - ParseDown [http://parsedown.org/](http://parsedown.org/) 
 
+Default engine is the first one.
+
 Frontend Integration
 --------------------
 
-Example disable WYSIWYG editor and switch even with content from the database to full Markdown support.
+Example use case: Disable WYSIWYG editor and switch the content from the product tables to full Markdown support.
 
 We're deactivating the WYSIWYG editor completely in the backend via the option
 
-`Stores -> Configuration -> General -> Content Management -> WYSIWYG Options` with value `Disable completely`
+`Stores -> Configuration -> General -> Content Management -> WYSIWYG Options` with value `Disable completely`.
+As a side effect you backend loads much faster ;-(
 
 Your template files must have the file extension `.md` to get automatically recognized.
 
