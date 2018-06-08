@@ -2,23 +2,22 @@
     "name": "schumacherfm/mage2-markdown",
     "description": "Markdown or Parsedown for Magento2",
     "require": {
-        "php": "~5.6.5|7.0.2|7.0.4|~7.0.6",
         "magento/framework": "*",
         "erusev/parsedown": "~1.4.5",
         "michelf/php-markdown": "~1.4.1"
     },
     "type": "magento2-module",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "license": [
-        "OSL-3"
+        "OSL-3.0"
     ],
-    "extra": {
-        "map": [
-            [
-                "*",
-                "SchumacherFM/Markdown"
-            ]
-        ]
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\Backend\\": ""
+        }
     },
     "authors": [
         {

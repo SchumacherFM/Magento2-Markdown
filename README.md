@@ -174,6 +174,6 @@ OSL-30
 Author
 ------
 
-[Cyrill Schumacher](http://cyrillschumacher.com)
+[Cyrill Schumacher](https://cyrillschumacher.com)
 
-[My pgp public key](http://www.schumacher.fm/cyrill.asc)
+[My pgp public key](https://cyrillschumacher.com/cyrill.asc)
